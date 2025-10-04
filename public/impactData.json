@@ -1,0 +1,46 @@
+{
+  "title": "See Our Impact and Volunteer Efforts",
+  "subtitle": "Every volunteer counts. Your efforts change lives.",
+  "stats": [
+    {
+      "label": "People Helped",
+      "value": "500+"
+    },
+    {
+      "label": "Hours Volunteered",
+      "value": "1200+"
+    },
+    {
+      "label": "Projects Completed",
+      "value": "30+"
+    },
+    {
+      "label": "Active Volunteers",
+      "value": "150+"
+    },
+    {
+      "label": "Communities Reached",
+      "value": "25+"
+    },
+    {
+      "label": "Funds Raised",
+      "value": "$50,000+"
+    },
+    {
+      "label": "Training Sessions Conducted",
+      "value": "80+"
+    },
+    {
+      "label": "Schools Supported",
+      "value": "12+"
+    },
+    {
+      "label": "Meals Distributed",
+      "value": "20,000+"
+    },
+    {
+      "label": "Medical Camps Organized",
+      "value": "10+"
+    }
+  ]
+}
