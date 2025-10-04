@@ -1,16 +1,60 @@
-# React + Vite
+# Volunteer Management Project - Client Side
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Project Overview
+This is the **frontend** of the Volunteer Management Project, built with **React**.  
+It allows users to:
+- View available volunteer posts
+- Register as a volunteer
+- Track their own volunteer requests
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
+- Responsive UI using Tailwind CSS
+- Connects with the backend server to fetch and post data
+- User-friendly dashboard for managing volunteer activities
+- Animations and notifications for better UX
+  
 
-## React Compiler
+## npm Packages Used
+The project uses the following key npm packages:
 
-The React Compiler is not enabled on this template. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Package Name       | Purpose |
+|------------------|---------|
+ `react-router-dom`   :     Routing / Navigation between pages 
+ `react-lottie`       :      Adding animated Lottie files for UI effects 
+ `sweetalert2`        :     Beautiful alert popups 
+ `react-toastify`     :     Toast notifications 
+ `framer-motion`      :     Animations and motion effects 
+ `React datepicker`   :     React datepicker 
 
-## Expanding the ESLint configuration
+*(Other dependencies like React, Tailwind CSS, etc. are also installed via npm)*
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+
+## Live Demo
+You can view the live version here: [Client Live Link](https://your-client-vercel-link.vercel.app)
+
+## Technologies Used in  Project
+Frontend:
+
+HTML – Structure and markup of the web pages
+
+CSS / Tailwind CSS – Styling and responsive design
+
+DaisyUI – Prebuilt UI components for faster design
+
+React – Frontend library for building dynamic UI
+
+JavaScript – Logic and interactivity in frontend
+
+Backend:
+
+Node.js – JavaScript runtime for backend
+
+Express.js – Framework for building API and server
+
+MongoDB – NoSQL database to store data (like users, volunteer requests, posts)
+
+
+npm install
+npm start
