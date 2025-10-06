@@ -1,4 +1,7 @@
 # Volunteer Management Project - Client Side
+## Live Demo
+You can view the live version here: # [https://volunter-managment-ae225.web.app/]
+
 
 ## Project Overview
 This is the **frontend** of the Volunteer Management Project, built with **React**.  
@@ -31,8 +34,7 @@ The project uses the following key npm packages:
 
 
 
-## Live Demo
-You can view the live version here: [Client Live Link](https://your-client-vercel-link.vercel.app)
+
 
 ## Technologies Used in  Project
 Frontend:
