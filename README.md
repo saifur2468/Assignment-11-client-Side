@@ -16,6 +16,11 @@ It allows users to:
 - Connects with the backend server to fetch and post data
 - User-friendly dashboard for managing volunteer activities
 - Animations and notifications for better UX
+- 404 page: Add a 404 page/Not Found Page.
+- Spinner: Show a loading spinner when the data is in a loading state.
+- Dynamic Title:  Make  website title Dynamic.  For every Route change,  The Website Title will be changed based on that route. 
+
+
   
 
 ## npm Packages Used
@@ -24,11 +29,13 @@ The project uses the following key npm packages:
 | Package Name       | Purpose |
 |------------------|---------|
  `react-router-dom`   :     Routing / Navigation between pages 
- `react-lottie`       :      Adding animated Lottie files for UI effects 
+ `react-lottie`       :     Adding animated Lottie files for UI effects 
  `sweetalert2`        :     Beautiful alert popups 
  `react-toastify`     :     Toast notifications 
  `framer-motion`      :     Animations and motion effects 
  `React datepicker`   :     React datepicker 
+ `mamba ui`           :     better UI & UX
+ `Pagination`         :     Implementing pagination in React involves managing state for the current page and displaying a subset of data
 
 *(Other dependencies like React, Tailwind CSS, etc. are also installed via npm)*
 
