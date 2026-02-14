@@ -27,7 +27,7 @@ const BeVolunteerModal = ({ post, onClose }) => {
         };
 
         try {
-            const res = await fetch("http://localhost:5000/volunteerRequests", {
+            const res = await fetch("https://volunter-server-iota.vercel.app/volunteerRequests", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(volunteerRequest),

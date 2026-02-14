@@ -1,6 +1,8 @@
-
 import React, { useEffect, useState } from "react";
 import { Typewriter } from "react-simple-typewriter";
+import { Link } from "react-router-dom";
+import Spinner from "./AuthSection/Spinner"; 
+
 const UpcomingPosts = () => {
   const [upcomingPosts, setUpcomingPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -8,7 +10,7 @@ const UpcomingPosts = () => {
   useEffect(() => {
     const fetchUpcoming = async () => {
       try {
-        const res = await fetch("http://localhost:5000/upcomingPosts"); // server e endpoint
+        const res = await fetch("https://volunter-server-iota.vercel.app/upcomingPosts");
         const data = await res.json();
         setUpcomingPosts(data);
         setLoading(false);
@@ -17,28 +19,27 @@ const UpcomingPosts = () => {
         setLoading(false);
       }
     };
-
     fetchUpcoming();
   }, []);
 
-  if (loading) return <p className="text-center mt-10 text-gray-500">Loading...</p>;
+  if (loading) return <Spinner />; 
 
   if (upcomingPosts.length === 0)
     return <p className="text-center mt-10 text-gray-500">No upcoming volunteer posts!</p>;
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-10">
-<h2 className="text-3xl font-bold mb-8 text-center text-indigo-600">
-  <Typewriter
-    words={['Upcoming Volunteer Opportunities']}
-    loop={false} 
-    cursor
-    cursorStyle="|"
-    typeSpeed={80}   
-    deleteSpeed={50} 
-    delaySpeed={1500} 
-  />
-</h2>
+      <h2 className="text-3xl font-bold mb-8 text-center text-indigo-600">
+        <Typewriter
+          words={['Upcoming Volunteer Opportunities']}
+          loop={false}
+          cursor
+          cursorStyle="|"
+          typeSpeed={80}
+          deleteSpeed={50}
+          delaySpeed={1500}
+        />
+      </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {upcomingPosts.map((post) => (
@@ -60,12 +61,12 @@ const UpcomingPosts = () => {
               <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
                 <strong>Deadline:</strong> {new Date(post.deadline).toLocaleDateString()}
               </p>
-              <a
-                 to={`/NeddPost/${post._id}`}
+              <Link
+                to={'/posts'}
                 className="inline-block mt-2 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg transition-colors duration-200"
               >
-               All Post
-              </a>
+                All Post
+              </Link>
             </div>
           </div>
         ))}

@@ -1,30 +1,40 @@
 import React, { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../AuthSection/AuthProvider";
 import Swal from "sweetalert2";
-
+import Spinner from "./../AuthSection/Spinner";
 const MyRequests = () => {
   const { user } = useContext(AuthContext);
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch user's requests
+
   const fetchRequests = async () => {
+    if (!user?.email) return;
+
     try {
-      const res = await fetch(`http://localhost:5000/volunteerRequests?volunteerEmail=${user?.email}`);
+      const res = await fetch(
+        `https://volunter-server-iota.vercel.app/volunteerRequests?volunteerEmail=${user.email}`
+      );
+
+      if (!res.ok) throw new Error("Failed to fetch");
+
       const data = await res.json();
       setRequests(data);
       setLoading(false);
     } catch (err) {
       console.error(err);
       setLoading(false);
+      Swal.fire("Error!", "Failed to load requests", "error");
     }
   };
 
   useEffect(() => {
-    if (user?.email) fetchRequests();
+    fetchRequests();
   }, [user]);
 
-  // Delete request
+  // =========================
+  // DELETE REQUEST (EMAIL PROTECTED)
+  // =========================
   const handleDelete = async (id) => {
     const confirm = await Swal.fire({
       title: "Are you sure?",
@@ -38,13 +48,20 @@ const MyRequests = () => {
 
     if (confirm.isConfirmed) {
       try {
-        const res = await fetch(`http://localhost:5000/volunteerRequests/${id}`, {
-          method: "DELETE",
-        });
+        const res = await fetch(
+          `https://volunter-server-iota.vercel.app/volunteerRequests/${id}?email=${user.email}`,
+          {
+            method: "DELETE",
+          }
+        );
+
         const data = await res.json();
-        if (data.deletedCount > 0) {
+
+        if (res.ok && data.deletedCount > 0) {
           Swal.fire("Deleted!", "Your request has been deleted.", "success");
           setRequests(requests.filter((req) => req._id !== id));
+        } else {
+          Swal.fire("Unauthorized!", "You cannot delete this request.", "error");
         }
       } catch (err) {
         console.error(err);
@@ -53,14 +70,27 @@ const MyRequests = () => {
     }
   };
 
-  if (loading) return <p className="text-center mt-10 text-gray-500">Loading...</p>;
+  // =========================
+  // LOADING STATE
+  // =========================
+   if (loading) return <Spinner />; 
+  // if (loading)
+  //   return <p className="text-center mt-10 text-gray-500">Loading...</p>;
 
   if (requests.length === 0)
-    return <p className="text-center mt-10 text-gray-500">You haven’t made any volunteer requests yet!</p>;
+    return (
+      <p className="text-center mt-10 text-gray-500">
+        You haven’t made any volunteer requests yet!
+      </p>
+    );
 
+ 
   return (
     <div className="max-w-6xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md mt-10">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-gray-100">My Volunteer Requests</h2>
+      <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-gray-100">
+        My Volunteer Requests
+      </h2>
+
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg">
           <thead className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
@@ -73,14 +103,22 @@ const MyRequests = () => {
               <th className="py-2 px-4 border-b">Action</th>
             </tr>
           </thead>
+
           <tbody>
             {requests.map((req) => (
-              <tr key={req._id} className="text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+              <tr
+                key={req._id}
+                className="text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+              >
                 <td className="py-2 px-4 border-b">{req.postTitle}</td>
                 <td className="py-2 px-4 border-b">{req.category}</td>
                 <td className="py-2 px-4 border-b">{req.location}</td>
-                <td className="py-2 px-4 border-b capitalize">{req.status}</td>
-                <td className="py-2 px-4 border-b">{req.suggestion || "-"}</td>
+                <td className="py-2 px-4 border-b capitalize">
+                  {req.status}
+                </td>
+                <td className="py-2 px-4 border-b">
+                  {req.suggestion || "-"}
+                </td>
                 <td className="py-2 px-4 border-b">
                   <button
                     onClick={() => handleDelete(req._id)}
@@ -99,3 +137,8 @@ const MyRequests = () => {
 };
 
 export default MyRequests;
+
+
+
+
+

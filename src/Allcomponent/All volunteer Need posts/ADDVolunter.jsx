@@ -20,12 +20,13 @@ const ADDVolunter = () => {
       organizerName: form.organizerName.value,
       organizerEmail: form.organizerEmail.value,
       deadline: startDate,
+      organizerEmail: user.email,
     };
 
     console.log("Sending to server:", newvolunter);
 
     try {
-      const res = await fetch("http://localhost:5000/volunter", {
+      const res = await fetch("https://volunter-server-iota.vercel.app/volunter", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(newvolunter),

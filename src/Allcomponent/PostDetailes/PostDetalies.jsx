@@ -2,22 +2,31 @@ import React, { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { AuthContext } from "../AuthSection/AuthProvider";
 import Swal from "sweetalert2";
+import Spinner from "./../AuthSection/Spinner";
 
 const PostDetalies = () => {
   const { id } = useParams();
   const [post, setPost] = useState(null);
+  const [loading, setLoading] = useState(true); 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { user } = useContext(AuthContext);
   const [suggestion, setSuggestion] = useState("");
 
   useEffect(() => {
-    fetch(`http://localhost:5000/volunter/${id}`)
+    fetch(`https://volunter-server-iota.vercel.app/volunter/${id}`)
       .then((res) => res.json())
-      .then((data) => setPost(data))
-      .catch((err) => console.error(err));
+      .then((data) => {
+        setPost(data);
+        setLoading(false); 
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false); 
+      });
   }, [id]);
 
-  if (!post) return <p className="text-center mt-10 text-gray-500">Loading...</p>;
+  if (loading) return <Spinner />; 
+  if (!post) return <p className="text-center mt-10 text-gray-500">Post not found!</p>;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,7 +49,7 @@ const PostDetalies = () => {
     };
 
     try {
-      const res = await fetch("http://localhost:5000/volunteerRequests", {
+      const res = await fetch("https://volunter-server-iota.vercel.app/volunteerRequests", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(volunteerRequest),
@@ -83,8 +92,6 @@ const PostDetalies = () => {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 p-4">
           <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-lg relative p-6 overflow-y-auto max-h-[90vh] transition-colors duration-300">
-            
-            {/* Close Button */}
             <button
               onClick={() => setIsModalOpen(false)}
               className="absolute top-3 right-3 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-full transition-colors duration-200"

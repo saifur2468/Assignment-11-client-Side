@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from "react-router-dom";
-import icon from '../../assets/Capture.JPG';
 
+ import { DotLottieReact } from'@lottiefiles/dotlottie-react';
 const Error = () => {
     return (
         <div className="flex flex-col md:flex-row items-center justify-center min-h-screen bg-gradient-to-br from-blue-100 to-blue-200 p-6">
@@ -17,23 +17,17 @@ const Error = () => {
                     to="/"
                     className="px-8 py-3 bg-purple-600 text-white font-semibold rounded-xl shadow-lg hover:bg-purple-700 hover:shadow-xl transition-all duration-300 ease-in-out"
                 >
-                    ⬅ Back to Home
+                     Back to Home
                 </Link>
             </div>
 
             {/* Right Section */}
             <div className=" max-w-lg">
-                <div>
-                    <div className="-top-10  text-center bg-purple-500 text-white text-3xl font-bold px-8 py-3 rounded-full shadow-lg animate-bounce">
-                        404
-                    </div>
-                    <img
-                        src={icon}
-                        alt="Error Illustration"
-                        className="w-48 h-48 mb-6 rounded-xl shadow-md"
-                    />
-             
-                </div>
+               <DotLottieReact
+      src="https://lottie.host/9dd1f6c8-6a1e-4e8e-9593-7d739443a7aa/GXOGoISxN7.lottie"
+      loop
+      autoplay
+    />
             </div>
         </div>
     );

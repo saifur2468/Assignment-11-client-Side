@@ -18,7 +18,7 @@ const FAQSection = () => {
   return (
     <div className=" py-16 px-4 md:px-16">
       {/* Animated H2 */}
-      <div className="mb-8 text-cyan-500">
+      <div className="mb-8 text-indigo-600">
         <GradualSpacing text="Frequently Asked Questions" />
       </div>
 

@@ -1,11 +1,15 @@
-import React from 'react';
+import React from "react";
+import PageTitle from "../../DyanmicTitke/Helmate"; 
 
-const Home = () => {
-    return (
-        <div>
-            
-        </div>
-    );
-};
+function HomePage() {
+  return (
+    <div>
+      <PageTitle title="Home | Volunteer Management" />
+      <h1>Welcome to Home Page</h1>
+      
+    </div>
+  );
+}
 
-export default Home;
+export default HomePage;
+

@@ -1,29 +1,36 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { AuthContext } from "../AuthSection/AuthProvider";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Swal from "sweetalert2";
 
 const PostUpdated = () => {
-  const { id } = useParams(); // URL থেকে id নিচ্ছে
+  const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
 
   const [startDate, setStartDate] = useState(new Date());
   const [post, setPost] = useState({});
-
-  // পুরোনো ডাটা লোড করা
-  useEffect(() => {
-    fetch(`http://localhost:5000/volunter/${id}`)
+  const [loading, setLoading] = useState(true);
+useEffect(() => {
+    fetch(`https://volunter-server-iota.vercel.app/volunter/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setPost(data);
         if (data.deadline) setStartDate(new Date(data.deadline));
+        setLoading(false);
       });
   }, [id]);
 
-  // Update function
   const handlevolunter = async (e) => {
     e.preventDefault();
+
+    if (!user?.email) {
+      Swal.fire("Error!", "User not logged in", "error");
+      return;
+    }
+
     const form = e.target;
 
     const updatedPost = {
@@ -32,30 +39,38 @@ const PostUpdated = () => {
       description: form.description.value,
       category: form.category.value,
       location: form.location.value,
-      volunteersNeeded: form.volunteersNeeded.value,
+      volunteersNeeded: Number(form.volunteersNeeded.value),
       organizerName: form.organizerName.value,
-      organizerEmail: form.organizerEmail.value,
+      organizerEmail: user.email,
       deadline: startDate,
     };
 
     try {
-      const res = await fetch(`http://localhost:5000/volunter/${id}`, {
-        method: "PUT",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(updatedPost),
-      });
+      const res = await fetch(
+        `https://volunter-server-iota.vercel.app/volunter/${id}?email=${user.email}`,
+        {
+          method: "PUT",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(updatedPost),
+        }
+      );
+
       const data = await res.json();
 
-      if (data.modifiedCount > 0) {
+      if (res.ok && data.modifiedCount > 0) {
         Swal.fire("Updated!", "Post updated successfully", "success");
         navigate("/My-Volunter");
       } else {
-        Swal.fire("No changes", "Nothing was updated", "info");
+        Swal.fire("Unauthorized!", "You cannot update this post", "error");
       }
     } catch (err) {
       Swal.fire("Error!", err.message, "error");
     }
   };
+
+  if (loading) {
+    return <p className="text-center mt-10">Loading...</p>;
+  }
 
   return (
     <div className="max-w-3xl mx-auto p-6 bg-gray-200 dark:bg-gray-900 shadow-md rounded-xl mt-10">
@@ -64,7 +79,6 @@ const PostUpdated = () => {
       </h2>
 
       <form onSubmit={handlevolunter} className="space-y-4">
-        {/* Thumbnail */}
         <div>
           <label className="block font-medium mb-1">Thumbnail URL</label>
           <input
@@ -76,7 +90,6 @@ const PostUpdated = () => {
           />
         </div>
 
-        {/* Post Title */}
         <div>
           <label className="block font-medium mb-1">Post Title</label>
           <input
@@ -88,7 +101,6 @@ const PostUpdated = () => {
           />
         </div>
 
-        {/* Description */}
         <div>
           <label className="block font-medium mb-1">Description</label>
           <textarea
@@ -100,7 +112,6 @@ const PostUpdated = () => {
           />
         </div>
 
-        {/* Category */}
         <div>
           <label className="block font-medium mb-1">Category</label>
           <select
@@ -115,7 +126,6 @@ const PostUpdated = () => {
           </select>
         </div>
 
-        {/* Location */}
         <div>
           <label className="block font-medium mb-1">Location</label>
           <select
@@ -134,7 +144,6 @@ const PostUpdated = () => {
           </select>
         </div>
 
-        {/* Volunteers Needed */}
         <div>
           <label className="block font-medium mb-1">
             No. of Volunteers Needed
@@ -148,7 +157,6 @@ const PostUpdated = () => {
           />
         </div>
 
-        {/* Deadline */}
         <div>
           <label className="block font-medium mb-1">Deadline</label>
           <DatePicker
@@ -158,7 +166,6 @@ const PostUpdated = () => {
           />
         </div>
 
-        {/* Organizer Info */}
         <div>
           <label className="block font-medium mb-1">Organizer Name</label>
           <input
@@ -169,18 +176,17 @@ const PostUpdated = () => {
             required
           />
         </div>
+
         <div>
           <label className="block font-medium mb-1">Organizer Email</label>
           <input
             type="email"
-            name="organizerEmail"
-            defaultValue={post.organizerEmail}
-            className="w-full border rounded-lg px-4 py-2"
-            required
+            value={user?.email || ""}
+            readOnly
+            className="w-full border rounded-lg px-4 py-2 bg-gray-100"
           />
         </div>
 
-        {/* Submit */}
         <button
           type="submit"
           className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded-lg"
@@ -193,3 +199,22 @@ const PostUpdated = () => {
 };
 
 export default PostUpdated;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
