@@ -1,125 +1,209 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import Spinner from "./../AuthSection/Spinner"; 
+import React, { useEffect, useState, useContext } from "react";
+import { AuthContext } from "../AuthSection/AuthProvider";
+import Swal from "sweetalert2";
+import { FaStar } from "react-icons/fa6";
+import { IoCloseSharp } from "react-icons/io5";
+const AllPosts = ({ onRequestClick }) => {
+  const { user } = useContext(AuthContext);
+  const [posts, setPosts] = useState([]);
+  const [search, setSearch] = useState("");
+  const [view, setView] = useState("card"); 
+  const [selectedPost, setSelectedPost] = useState(null);
 
-const NeddPost = () => {
-  const [volunteerPosts, setVolunteerPosts] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(true);
-
-  const postsPerPage = 6; 
-
-  // Fetch data
-  useEffect(() => {
-    fetch("https://volunter-server-iota.vercel.app/volunter")
-      .then((res) => res.json())
-      .then((data) => {
-        setVolunteerPosts(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
-      });
-  }, []);
-
-  if (loading) return <Spinner />; 
-
-  
-  const filteredPosts = volunteerPosts.filter((post) =>
-    post.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  // Pagination logic
-  const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
-  const startIndex = (currentPage - 1) * postsPerPage;
-  const currentPosts = filteredPosts.slice(startIndex, startIndex + postsPerPage);
-
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    window.scrollTo({ top: 0, behavior: "smooth" }); 
+  const fetchPosts = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/posts/all");
+      const data = await res.json();
+      setPosts(data);
+    } catch (err) {
+      console.error(err);
+      Swal.fire("Error", "Failed to fetch posts", "error");
+    }
   };
 
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  const handleRequest = async (postId) => {
+    if (!user?.email)
+      return Swal.fire("Login Required", "Please login first", "warning");
+
+    try {
+      const res = await fetch("http://localhost:5000/requests", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ postId, volunteerEmail: user.email }),
+      });
+      const data = await res.json();
+      if (data.insertedId) Swal.fire("Success", "Request sent!", "success");
+    } catch (err) {
+      Swal.fire("Error", err.message, "error");
+    }
+  };
+
+  const filteredPosts = posts.filter(
+    (p) =>
+      p.title.toLowerCase().includes(search.toLowerCase()) ||
+      p.category.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <h2 className="text-3xl font-bold mb-6 text-center text-indigo-600">
-        All Volunteer Need Posts
-      </h2>
-
-      {/* Search Bar */}
-      <div className="mb-8">
+    <div className="max-w-6xl mx-auto mt-10">
+      {/* Search & View Toggle */}
+      <div className="flex justify-between items-center mb-4">
         <input
-          type="text"
-          placeholder="Search by title..."
-          value={searchTerm}
-          onChange={(e) => {
-            setSearchTerm(e.target.value);
-            setCurrentPage(1); 
-          }}
-          className="w-full mx-auto border border-gray-300 rounded-lg px-4 py-3 text-lg text-center focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-all"
+          type="text "
+          placeholder="Search by title or category..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="border px-4 py-2 rounded w-1/2 text-center"
         />
+        <button
+          onClick={() => setView(view === "card" ? "table" : "card")}
+          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+        >
+          {view === "card" ? "Table View" : "Card View"}
+        </button>
       </div>
 
-      {/* Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {currentPosts.length === 0 && (
-          <p className="text-center col-span-full text-gray-500 text-lg">
-            No posts found!
-          </p>
-        )}
-
-        {currentPosts.map((post) => (
-          <div
-            key={post._id}
-            className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 flex flex-col"
-          >
-            <img
-              src={post.thumbnail}
-              alt={post.title}
-              className="w-full h-48 object-cover"
-            />
-            <div className="p-5 flex flex-col flex-grow">
-              <h3 className="text-2xl font-semibold mb-2 text-indigo-600">
-                {post.title}
-              </h3>
-              <p className="text-gray-700 mb-4 line-clamp-3">{post.description}</p>
-
-              <div className="mt-auto flex justify-between items-center">
-                <span className="text-sm text-gray-500">
-                  Volunteers: {post.volunteersNeeded}
-                </span>
-                <Link to={`/PostDetalies/${post._id}`}>
-                  <button className="btn btn-sm btn-secondary text-white bg-indigo-500 hover:bg-indigo-600 border-0">
-                    Post Details
-                  </button>
-                </Link>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-     
-      {totalPages > 1 && (
-        <div className="flex justify-center mt-10 space-x-2">
-          {Array.from({ length: totalPages }, (_, i) => (
-            <button
-              key={i + 1}
-              onClick={() => handlePageChange(i + 1)}
-              className={`px-4 py-2 rounded ${
-                currentPage === i + 1
-                  ? "bg-indigo-500 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-indigo-200"
-              } transition-colors`}
+      {/* Card View */}
+      {view === "card" ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {filteredPosts.map((post) => (
+            <div
+              key={post._id}
+              className="bg-white dark:bg-gray-800 p-4 rounded shadow flex flex-col"
             >
-              {i + 1}
-            </button>
+              {/* Thumbnail */}
+              <img
+                src={
+                  post.thumbnail ||
+                  "https://via.placeholder.com/400x200?text=No+Image"
+                }
+                alt={post.title}
+                className="w-full h-48 object-cover rounded mb-2"
+              />
+
+              {/* Post Info */}
+              <h3 className="font-bold text-xl">{post.title}</h3>
+              <p className="text-sm text-gray-500">{post.category}</p>
+              <p className="text-sm text-gray-500">{post.location}</p>
+              <p className="text-sm text-yellow-600 font-semibold">
+                <FaStar></FaStar> Rating: {post.rating || 0}
+              </p>
+
+              {/* Details Button */}
+              <button
+                onClick={() => setSelectedPost(post)}
+                className="mt-2 bg-green-500 text-white px-3 py-1 rounded"
+              >
+                Details
+              </button>
+            </div>
           ))}
+        </div>
+      ) : (
+        /* Table View */
+        <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-700">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-bold uppercase">
+                  Thumbnail
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-bold uppercase">
+                  Title
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-bold uppercase">
+                  Category
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-bold uppercase">
+                  Location
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-bold uppercase">
+                  Rating
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-bold uppercase">
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+              {filteredPosts.map((post) => (
+                <tr key={post._id}>
+                  <td className="px-6 py-2">
+                    <img
+                      src={
+                        post.thumbnail ||
+                        "https://via.placeholder.com/100x60?text=No+Image"
+                      }
+                      alt={post.title}
+                      className="w-24 h-16 object-cover rounded"
+                    />
+                  </td>
+                  <td className="px-6 py-2">{post.title}</td>
+                  <td className="px-6 py-2">{post.category}</td>
+                  <td className="px-6 py-2">{post.location}</td>
+                  <td className="px-6 py-2 text-yellow-600 font-semibold">
+                    <FaStar></FaStar> {post.rating || 0}
+                  </td>
+                  <td className="px-6 py-2">
+                    <button
+                      onClick={() => setSelectedPost(post)}
+                      className="bg-green-500 text-white px-3 py-1 rounded"
+                    >
+                      Details
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Modal / Details */}
+      {selectedPost && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded shadow max-w-lg w-full relative">
+            <img
+              src={
+                selectedPost.thumbnail ||
+                "https://via.placeholder.com/400x200?text=No+Image"
+              }
+              alt={selectedPost.title}
+              className="w-full h-48 object-cover rounded mb-3"
+            />
+            <h3 className="text-2xl font-bold mb-2">{selectedPost.title}</h3>
+            <p className="mb-1">Category: {selectedPost.category}</p>
+            <p className="mb-1">Location: {selectedPost.location}</p>
+            <p className="mb-1">
+              Volunteers Needed: {selectedPost.volunteersNeeded}
+            </p>
+            <p className="mb-1">
+              Deadline: {new Date(selectedPost.deadline).toLocaleDateString()}
+            </p>
+            <p className="mb-1"><FaStar></FaStar> Rating: {selectedPost.rating || 0}</p>
+            <p className="mb-4">{selectedPost.description}</p>
+
+            <button
+              onClick={() => handleRequest(selectedPost._id)}
+              className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
+            >
+              Request to Volunteer
+            </button>
+            <button
+              onClick={() => setSelectedPost(null)}
+              className="absolute top-2 right-2 text-red-500 font-bold"
+            >
+              <IoCloseSharp />
+            </button>
+          </div>
         </div>
       )}
     </div>
   );
 };
 
-export default NeddPost;
+export default AllPosts;
