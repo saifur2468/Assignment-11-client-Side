@@ -7,12 +7,12 @@ const AllPosts = ({ onRequestClick }) => {
   const { user } = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
   const [search, setSearch] = useState("");
-  const [view, setView] = useState("card"); 
+  const [view, setView] = useState("card");
   const [selectedPost, setSelectedPost] = useState(null);
 
   const fetchPosts = async () => {
     try {
-      const res = await fetch("http://localhost:5000/posts/all");
+      const res = await fetch("https://vloener-ser.vercel.app/posts/all");
       const data = await res.json();
       setPosts(data);
     } catch (err) {
@@ -30,7 +30,7 @@ const AllPosts = ({ onRequestClick }) => {
       return Swal.fire("Login Required", "Please login first", "warning");
 
     try {
-      const res = await fetch("http://localhost:5000/requests", {
+      const res = await fetch("https://vloener-ser.vercel.app/requests", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ postId, volunteerEmail: user.email }),

@@ -8,7 +8,7 @@ const MyRequests = () => {
 
   const fetchRequests = async () => {
     if (!user?.email) return;
-    const res = await fetch(`http://localhost:5000/my-requests?volunteerEmail=${user.email}`);
+    const res = await fetch(`https://vloener-ser.vercel.app/my-requests?volunteerEmail=${user.email}`);
     const data = await res.json();
     setRequests(data);
   };
@@ -26,7 +26,7 @@ const MyRequests = () => {
     });
 
     if (confirm.isConfirmed) {
-      const res = await fetch(`http://localhost:5000/cancel-request/${id}?email=${user.email}`, { method: "DELETE" });
+      const res = await fetch(`https://vloener-ser.vercel.app/cancel-request/${id}?email=${user.email}`, { method: "DELETE" });
       if (res.ok) {
         Swal.fire("Cancelled", "Your request has been cancelled", "success");
         setRequests(prev => prev.filter(r => r._id !== id));

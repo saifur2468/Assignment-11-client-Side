@@ -7,7 +7,7 @@
 // const PostDetalies = () => {
 //   const { id } = useParams();
 //   const [post, setPost] = useState(null);
-//   const [loading, setLoading] = useState(true); 
+//   const [loading, setLoading] = useState(true);
 //   const [isModalOpen, setIsModalOpen] = useState(false);
 //   const { user } = useContext(AuthContext);
 //   const [suggestion, setSuggestion] = useState("");
@@ -17,7 +17,7 @@
 //     setLoading(true);
 
 //     // localhost:5000 ব্যবহার করা হয়েছে এবং ব্যাকেন্ডের /volunteer/:id এন্ডপয়েন্ট কল করা হয়েছে
-//     fetch(`http://localhost:5000/volunteer/${id}`)
+//     fetch(`https://vloener-ser.vercel.app/volunteer/${id}`)
 //       .then((res) => {
 //         if (!res.ok) {
 //           throw new Error("Post not found");
@@ -26,15 +26,15 @@
 //       })
 //       .then((data) => {
 //         setPost(data);
-//         setLoading(false); 
+//         setLoading(false);
 //       })
 //       .catch((err) => {
 //         console.error("Fetch Error:", err);
-//         setLoading(false); 
+//         setLoading(false);
 //       });
 //   }, [id]);
 
-//   if (loading) return <Spinner />; 
+//   if (loading) return <Spinner />;
 //   if (!post) return <p className="text-center mt-10 text-gray-500">Post not found!</p>;
 
 //   const handleSubmit = async (e) => {

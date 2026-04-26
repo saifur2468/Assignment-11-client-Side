@@ -13,8 +13,8 @@ const MyPosts = () => {
   const fetchPosts = async () => {
     if (!user?.email) return;
     const url = isAdmin
-      ? "http://localhost:5000/posts/all"
-      : `http://localhost:5000/posts?email=${user.email}`;
+      ? "https://vloener-ser.vercel.app/posts/all"
+      : `https://vloener-ser.vercel.app/posts?email=${user.email}`;
     const res = await fetch(url);
     const data = await res.json();
     setPosts(data);
@@ -36,7 +36,7 @@ const MyPosts = () => {
     if (!confirm.isConfirmed) return;
 
     const res = await fetch(
-      `http://localhost:5000/posts/${id}?email=${user.email}`,
+      `https://vloener-ser.vercel.app/posts/${id}?email=${user.email}`,
       { method: "DELETE" }
     );
     if (res.ok) {
@@ -62,7 +62,7 @@ const MyPosts = () => {
 
     try {
       const res = await fetch(
-        `http://localhost:5000/posts/${selectedPost._id}?email=${user.email}`,
+        `https://vloener-ser.vercel.app/posts/${selectedPost._id}?email=${user.email}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
