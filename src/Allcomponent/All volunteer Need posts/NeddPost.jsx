@@ -25,22 +25,62 @@ const AllPosts = ({ onRequestClick }) => {
     fetchPosts();
   }, []);
 
-  const handleRequest = async (postId) => {
-    if (!user?.email)
-      return Swal.fire("Login Required", "Please login first", "warning");
+  // const handleRequest = async (postId) => {
+  //   if (!user?.email)
+  //     return Swal.fire("Login Required", "Please login first", "warning");
 
-    try {
-      const res = await fetch("https://vloener-ser.vercel.app/requests", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ postId, volunteerEmail: user.email }),
-      });
-      const data = await res.json();
-      if (data.insertedId) Swal.fire("Success", "Request sent!", "success");
-    } catch (err) {
-      Swal.fire("Error", err.message, "error");
+  //   try {
+  //     const res = await fetch("https://vloener-ser.vercel.app/requests", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ postId, postTitle,postThumbnail, volunteerEmail: user.email }),
+  //     });
+  //     const data = await res.json();
+  //     if (data.insertedId) Swal.fire("Success", "Request sent!", "success");
+  //   } catch (err) {
+  //     Swal.fire("Error", err.message, "error");
+  //   }
+  // };
+
+
+
+
+
+const handleRequest = async (post) => { 
+  if (!user?.email)
+    return Swal.fire("Login Required", "Please login first", "warning");
+
+  try {
+    
+    const res = await fetch("https://vloener-ser.vercel.app/Requests", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ 
+        postId: post._id,               
+        postTitle: post.title,           
+        postThumbnail: post.thumbnail,   
+        postCategory: post.category,     
+        volunteerEmail: user.email,
+        volunteerName: user.displayName || "Anonymous",
+        volunteerImage: user.photoURL || ""
+      }),
+    });
+
+    const data = await res.json();
+    if (data.insertedId) {
+      Swal.fire("Success", "Request sent!", "success");
+      if (typeof setSelectedPost === "function") {
+        setSelectedPost(null); 
+      }
     }
-  };
+  } catch (err) {
+    Swal.fire("Error", err.message, "error");
+  }
+};
+
+
+
+
 
   const filteredPosts = posts.filter(
     (p) =>
@@ -188,7 +228,8 @@ const AllPosts = ({ onRequestClick }) => {
             <p className="mb-4">{selectedPost.description}</p>
 
             <button
-              onClick={() => handleRequest(selectedPost._id)}
+              // onClick={() => handleRequest(selectedPost._id)}
+              onClick={() => handleRequest(selectedPost)}
               className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
             >
               Request to Volunteer
