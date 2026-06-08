@@ -12,7 +12,7 @@ const AllPosts = ({ onRequestClick }) => {
 
   const fetchPosts = async () => {
     try {
-      const res = await fetch("https://vloener-ser.vercel.app/posts/all");
+      const res = await fetch("http://localhost:5000/posts/all");
       const data = await res.json();
       setPosts(data);
     } catch (err) {
@@ -30,7 +30,7 @@ const AllPosts = ({ onRequestClick }) => {
   //     return Swal.fire("Login Required", "Please login first", "warning");
 
   //   try {
-  //     const res = await fetch("https://vloener-ser.vercel.app/requests", {
+  //     const res = await fetch("http://localhost:5000/requests", {
   //       method: "POST",
   //       headers: { "Content-Type": "application/json" },
   //       body: JSON.stringify({ postId, postTitle,postThumbnail, volunteerEmail: user.email }),
@@ -46,37 +46,39 @@ const AllPosts = ({ onRequestClick }) => {
 
 
 
-const handleRequest = async (post) => { 
-  if (!user?.email)
-    return Swal.fire("Login Required", "Please login first", "warning");
+  const handleRequest = async (post) => {
+    if (!user?.email)
+      return Swal.fire("Login Required", "Please login first", "warning");
 
-  try {
-    
-    const res = await fetch("https://vloener-ser.vercel.app/Requests", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ 
-        postId: post._id,               
-        postTitle: post.title,           
-        postThumbnail: post.thumbnail,   
-        postCategory: post.category,     
-        volunteerEmail: user.email,
-        volunteerName: user.displayName || "Anonymous",
-        volunteerImage: user.photoURL || ""
-      }),
-    });
+    try {
 
-    const data = await res.json();
-    if (data.insertedId) {
-      Swal.fire("Success", "Request sent!", "success");
-      if (typeof setSelectedPost === "function") {
-        setSelectedPost(null); 
+      const res = await fetch("http://localhost:5000/volunteerRequests", {
+  method: "POST",
+  headers: { 
+    "Content-Type": "application/json" 
+  },
+  body: JSON.stringify({
+    postId: post._id,
+    postTitle: post.title,
+    postThumbnail: post.thumbnail,
+    postCategory: post.category,
+    volunteerEmail: user.email,
+    volunteerName: user.displayName || "Anonymous",
+    volunteerImage: user.photoURL || ""
+  }),
+});
+
+      const data = await res.json();
+      if (data.insertedId) {
+        Swal.fire("Success", "Request sent!", "success");
+        if (typeof setSelectedPost === "function") {
+          setSelectedPost(null);
+        }
       }
+    } catch (err) {
+      Swal.fire("Error", err.message, "error");
     }
-  } catch (err) {
-    Swal.fire("Error", err.message, "error");
-  }
-};
+  };
 
 
 
