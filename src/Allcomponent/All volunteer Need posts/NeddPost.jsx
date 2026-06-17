@@ -12,7 +12,7 @@ const AllPosts = ({ onRequestClick }) => {
 
   const fetchPosts = async () => {
     try {
-      const res = await fetch("http://localhost:5000/posts/all");
+      const res = await fetch("https://volunter-server-iota.vercel.app/posts/all");
       const data = await res.json();
       setPosts(data);
     } catch (err) {
@@ -30,7 +30,7 @@ const AllPosts = ({ onRequestClick }) => {
   //     return Swal.fire("Login Required", "Please login first", "warning");
 
   //   try {
-  //     const res = await fetch("http://localhost:5000/requests", {
+  //     const res = await fetch("https://volunter-server-iota.vercel.app/requests", {
   //       method: "POST",
   //       headers: { "Content-Type": "application/json" },
   //       body: JSON.stringify({ postId, postTitle,postThumbnail, volunteerEmail: user.email }),
@@ -52,21 +52,21 @@ const AllPosts = ({ onRequestClick }) => {
 
     try {
 
-      const res = await fetch("http://localhost:5000/volunteerRequests", {
-  method: "POST",
-  headers: { 
-    "Content-Type": "application/json" 
-  },
-  body: JSON.stringify({
-    postId: post._id,
-    postTitle: post.title,
-    postThumbnail: post.thumbnail,
-    postCategory: post.category,
-    volunteerEmail: user.email,
-    volunteerName: user.displayName || "Anonymous",
-    volunteerImage: user.photoURL || ""
-  }),
-});
+      const res = await fetch("https://volunter-server-iota.vercel.app/volunteerRequests", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          postId: post._id,
+          postTitle: post.title,
+          postThumbnail: post.thumbnail,
+          postCategory: post.category,
+          volunteerEmail: user.email,
+          volunteerName: user.displayName || "Anonymous",
+          volunteerImage: user.photoURL || ""
+        }),
+      });
 
       const data = await res.json();
       if (data.insertedId) {

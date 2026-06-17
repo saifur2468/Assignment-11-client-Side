@@ -25,7 +25,7 @@ const AddPost = () => {
     };
 
     try {
-      const res = await fetch("http://localhost:5000/posts", {
+      const res = await fetch("https://volunter-server-iota.vercel.app/posts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newPost),

@@ -14,7 +14,7 @@ const UpcomingPosts = () => {
   useEffect(() => {
     const fetchUpcoming = async () => {
       try {
-        const res = await fetch("http://localhost:5000/posts/top-rated");
+        const res = await fetch("https://volunter-server-iota.vercel.app/posts/top-rated");
         if (!res.ok) throw new Error("Failed to fetch data");
         const data = await res.json();
         setUpcomingPosts(data);

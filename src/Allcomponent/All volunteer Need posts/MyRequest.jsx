@@ -7,7 +7,7 @@ const MyRequests = () => {
   const [requests, setRequests] = useState([]);
 
   const loadRequests = async () => {
-    const res = await fetch(`http://localhost:5000/my-requests?email=${user.email}`)
+    const res = await fetch(`https://volunter-server-iota.vercel.app/my-requests?email=${user.email}`)
 
     const data = await res.json();
     setRequests(data);
@@ -31,7 +31,7 @@ const MyRequests = () => {
     if (!result.isConfirmed) return;
 
     const res = await fetch(
-      `http://localhost:5000/cancel-request/${id}?email=${user.email}`,
+      `https://volunter-server-iota.vercel.app/cancel-request/${id}?email=${user.email}`,
       {
         method: "DELETE",
       }
@@ -65,13 +65,13 @@ const MyRequests = () => {
           <tbody>
             {requests.map((request) => (
               <tr key={request._id}>
-               <td>
-  <img
-    src={request.postThumbnail} 
-    alt={request.postTitle}
-    className="w-20 h-14 object-cover rounded"
-  />
-</td>
+                <td>
+                  <img
+                    src={request.postThumbnail}
+                    alt={request.postTitle}
+                    className="w-20 h-14 object-cover rounded"
+                  />
+                </td>
 
                 <td>{request.postTitle}</td>
 

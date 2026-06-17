@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import img1 from '../../assets/img/paris_canal_mirpur_020224_50.jpg'
-import img2 from '../../assets/img/pngtree-volunteer-service-activity-webpage-login-yellow-banner-png-image_6688904.jpg'
-import img3 from '../../assets/img/gettyimages-1543945056-612x612.jpg'
+import img2 from '../../assets/img/medium-shot-people-with-food-donations.jpg'
+import img3 from '../../assets/img/men-women-help-each-other-collect-garbage.jpg'
 import img4 from '../../assets/img/p-PHL7810 1280x853.jpg'
 
 import ImpactSectionMarquee from "../ImpactSectionMarquee/WhatMakesUsDifferent";
