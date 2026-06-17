@@ -15,7 +15,7 @@ const UpcomingPosts = () => {
     const fetchUpcoming = async () => {
       try {
         const res = await fetch("https://volunter-server-iota.vercel.app/posts/top-rated");
-        if (!res.ok) throw new Error("Failed to fetch data");
+        if (!res.ok) throw new Error("Backend Theke Data Load hote parche na Try korote thako");
         const data = await res.json();
         setUpcomingPosts(data);
       } catch (err) {
