@@ -3,7 +3,7 @@ import { Typewriter } from "react-simple-typewriter";
 import { Link } from "react-router-dom";
 import Spinner from "./AuthSection/Spinner";
 
-import { FaCalendarAlt, FaStar, FaMapMarkerAlt, FaTag, FaArrowRight } from "react-icons/fa";
+import { FaCalendarAlt, FaStar, FaMapMarkerAlt, FaTag, FaExternalLinkAlt } from "react-icons/fa";
 import { IoCloseCircleOutline } from "react-icons/io5";
 
 const UpcomingPosts = () => {
@@ -30,10 +30,11 @@ const UpcomingPosts = () => {
   if (loading) return <Spinner />;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-16">
-      {/* Title with Typewriter */}
-      <div className="text-center mb-12">
-        <h2 className="text-4xl font-extrabold text-indigo-600 dark:text-indigo-400 mb-3">
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      
+      {/* Header Section */}
+      <div className="text-center space-y-3 mb-14">
+        <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
           <Typewriter
             words={["Upcoming Volunteer Events"]}
             loop={false}
@@ -41,142 +42,83 @@ const UpcomingPosts = () => {
             typeSpeed={80}
           />
         </h2>
-        <div className="h-1.5 w-20 bg-indigo-500 mx-auto rounded-full"></div>
+        <div className="h-1.5 w-16 bg-emerald-500 mx-auto rounded-full"></div>
+        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 max-w-xl mx-auto pt-2">
+          Discover top-rated community initiatives and join hands to create a meaningful impact.
+        </p>
       </div>
 
       {upcomingPosts.length === 0 ? (
-        <div className="text-center py-20 bg-gray-50 dark:bg-gray-800 rounded-3xl border-2 border-dashed">
-          <p className="text-gray-500 text-xl italic mb-6">No upcoming volunteer posts found!</p>
-          <Link to="/posts" className="btn btn-primary rounded-full px-8">View All</Link>
+        <div className="text-center py-20 bg-gray-50 dark:bg-gray-900/50 rounded-3xl border border-gray-200 dark:border-gray-800">
+          <p className="text-gray-500 text-lg italic mb-6">No upcoming volunteer posts found!</p>
+          <Link to="/posts" className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-md transition-all">
+            View All Posts
+          </Link>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {upcomingPosts.map((post) => (
             <div
               key={post._id}
-              className="group flex flex-col bg-white dark:bg-gray-900 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 dark:border-gray-800 overflow-hidden"
+              onClick={() => setSelectedPost(post)}
+              className="group cursor-pointer flex flex-col bg-white dark:bg-gray-900 rounded-3xl shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-200/80 dark:border-gray-800 overflow-hidden transform hover:-translate-y-1"
             >
-              {/* Thumbnail with Overlay */}
-              <div className="relative h-56 overflow-hidden">
+              {/* Thumbnail with Category Badge */}
+              <div className="relative h-56 overflow-hidden bg-gray-100 dark:bg-gray-800">
                 <img
                   src={post.thumbnail || "https://via.placeholder.com/400x200?text=No+Image"}
                   alt={post.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute top-4 left-4 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm px-3 py-1 rounded-full text-indigo-600 dark:text-indigo-400 text-xs font-bold flex items-center gap-1.5 shadow-sm">
-                  <FaTag /> {post.category}
+                <div className="absolute top-4 left-4 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md px-3.5 py-1.5 rounded-full text-emerald-600 dark:text-emerald-400 text-xs font-bold flex items-center gap-1.5 shadow-sm border border-gray-200/50 dark:border-gray-800">
+                  <FaTag className="text-[10px]" /> 
+                  <span>{post.category}</span>
+                </div>
+
+                {/* Subtle Hover Action Indicator */}
+                <div className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/90 dark:bg-gray-900/90 backdrop-blur-md flex items-center justify-center text-gray-900 dark:text-white opacity-0 group-hover:opacity-100 transition-opacity shadow-md">
+                  <FaExternalLinkAlt className="w-3.5 h-3.5" />
                 </div>
               </div>
 
-              {/* Card Content */}
-              <div className="p-6 flex-grow">
-                <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-3 line-clamp-1">
-                  {post.title}
-                </h3>
+              {/* Card Body */}
+              <div className="p-6 flex-grow flex flex-col justify-between space-y-4">
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white line-clamp-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                    {post.title}
+                  </h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mt-1.5 leading-relaxed">
+                    {post.description}
+                  </p>
+                </div>
 
-                <div className="space-y-3 mb-6">
-                  <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 gap-2">
-                    <FaMapMarkerAlt className="text-red-500 shrink-0" />
-                    <span>{post.location}</span>
+                {/* Info Details Footer */}
+                <div className="space-y-2.5 pt-4 border-t border-gray-100 dark:border-gray-800/80 text-xs text-gray-600 dark:text-gray-400 font-medium">
+                  <div className="flex items-center gap-2.5">
+                    <FaMapMarkerAlt className="text-rose-500 shrink-0 text-sm" />
+                    <span className="truncate">{post.location}</span>
                   </div>
-                  <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 gap-2">
-                    <FaCalendarAlt className="text-indigo-500 shrink-0" />
-                    <span>Deadline: {new Date(post.deadline).toLocaleDateString("en-GB")}</span>
-                  </div>
-                  <div className="flex items-center text-sm font-bold text-yellow-600 gap-2">
-                    <FaStar className="shrink-0" />
-                    <span>Rating: {post.rating || "0.0"}</span>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <FaCalendarAlt className="text-emerald-500 shrink-0 text-sm" />
+                      <span>Deadline: {new Date(post.deadline).toLocaleDateString("en-GB")}</span>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 text-amber-500 font-bold bg-amber-50 dark:bg-amber-950/40 px-2.5 py-1 rounded-lg border border-amber-200/50 dark:border-amber-900/50">
+                      <FaStar className="text-xs" />
+                      <span>{post.rating || "0.0"}</span>
+                    </div>
                   </div>
                 </div>
 
-                <button
-                  onClick={() => setSelectedPost(post)}
-                  className="w-full py-3 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-white font-bold rounded-2xl flex items-center justify-center gap-2 hover:bg-indigo-600 hover:text-white transition-all duration-300 group/btn"
-                >
-                  View Details <FaArrowRight className="group-hover/btn:translate-x-1 transition-transform" />
-                </button>
               </div>
             </div>
           ))}
         </div>
       )}
 
-
-      {selectedPost && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4 transition-all duration-300">
-          <div className="bg-white dark:bg-gray-900 w-full max-w-lg rounded-[2.5rem] overflow-hidden relative shadow-[0_20px_50px_rgba(0,0,0,0.3)] animate-in zoom-in-95 fade-in duration-300 border border-white/20">
-
-            {/* Close Button - More Visible */}
-            <button
-              onClick={() => setSelectedPost(null)}
-              className="absolute top-5 right-5 z-20 text-white bg-black/40 hover:bg-red-500 backdrop-blur-md p-2 rounded-full transition-all duration-300 group"
-            >
-              <IoCloseCircleOutline size={24} className="group-hover:rotate-90 transition-transform duration-300" />
-            </button>
-
-            {/* Hero Image Section */}
-            <div className="relative h-60 overflow-hidden">
-              <img
-                src={selectedPost.thumbnail}
-                className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-700"
-                alt="Thumbnail"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-              <div className="absolute bottom-6 left-8">
-                <span className="bg-indigo-600 text-white text-[10px] uppercase font-black px-3 py-1 rounded-full tracking-widest shadow-lg">
-                  {selectedPost.category}
-                </span>
-              </div>
-            </div>
-
-            {/* Content Area */}
-            <div className="p-8">
-              <h3 className="text-2xl font-black mb-3 text-gray-800 dark:text-white leading-tight">
-                {selectedPost.title}
-              </h3>
-
-              <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed mb-8 line-clamp-3">
-                {selectedPost.description}
-              </p>
-
-              {/* Info Grid - Styled with icons */}
-              <div className="grid grid-cols-2 gap-3 mb-8">
-                <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 flex items-center gap-3">
-                  <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg text-red-500">
-                    <FaMapMarkerAlt size={14} />
-                  </div>
-                  <div>
-                    <p className="text-[10px] uppercase font-bold text-gray-400">Location</p>
-                    <p className="text-xs font-bold dark:text-gray-200">{selectedPost.location}</p>
-                  </div>
-                </div>
-
-                <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 flex items-center gap-3">
-                  <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg text-indigo-500">
-                    <FaCalendarAlt size={14} />
-                  </div>
-                  <div>
-                    <p className="text-[10px] uppercase font-bold text-gray-400">Deadline</p>
-                    <p className="text-xs font-bold dark:text-gray-200">
-                      {new Date(selectedPost.deadline).toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Action Button - Animated */}
-              {/* <Link
-          to={`/post-details/${selectedPost._id}`}
-          className="group relative flex items-center justify-center gap-3 w-full bg-indigo-600 py-4 text-white font-black rounded-2xl hover:bg-indigo-700 transition-all duration-300 shadow-[0_10px_20px_rgba(79,70,229,0.3)] active:scale-[0.98]"
-        >
-          <span>Get Started Now</span>
-          <FaArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-        </Link> */}
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+</section>
   );
 };
 
