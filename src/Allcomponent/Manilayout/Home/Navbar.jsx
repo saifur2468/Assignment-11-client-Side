@@ -1,6 +1,16 @@
-import React, { useState, useEffect } from "react";
+
+import React, { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { FaBars, FaTimes, FaChevronDown, FaUser, FaSignOutAlt, FaSignInAlt } from "react-icons/fa";
+import {
+  FaBars,
+  FaTimes,
+  FaChevronDown,
+  FaSignOutAlt,
+  FaSignInAlt,
+  FaHandsHelping,
+  FaUser,
+  FaCog,
+} from "react-icons/fa";
 import DarkModeToggle from "../../DarkModeToggle/DarkModeToggle";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../../AuthSection/Authcontex";
@@ -14,6 +24,7 @@ const Navbar = () => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
     });
+
     return () => unsubscribe();
   }, []);
 
@@ -28,237 +39,296 @@ const Navbar = () => {
   };
 
   const navItems = [
-    { to: "/", label: "Home" },
+    { to: "/", label: "Home", end: true },
     { to: "/posts", label: "All Posts" },
     { to: "/add-volunteer", label: "Add Post" },
     { to: "/My-Volunter", label: "My Volunteers" },
     { to: "/my-Request", label: "My Requests" },
-    {
-      label: "Profile",
-      dropdown: [
-        { to: "/profile", label: "My Profile" },
-        { to: "/settings", label: "Settings" },
-      ],
-    },
   ];
 
-  return (
-    <nav className="bg-white/80 dark:bg-gray-900/90 backdrop-blur-md sticky top-0 z-50 border-b border-gray-200/80 dark:border-gray-800 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8 h-20">
-        
-        {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 text-xl sm:text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 font-serif tracking-tight">
-          <span>Volunteer Management</span>
-        </Link>
+  const navLinkClass = ({ isActive }) =>
+    `relative whitespace-nowrap rounded-xl px-3 py-2.5 text-sm font-semibold
+    transition-all duration-200
+    ${
+      isActive
+        ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400"
+        : "text-gray-600 hover:bg-gray-100 hover:text-emerald-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-emerald-400"
+    }`;
 
-        {/* Desktop Menu */}
-        <ul className="hidden md:flex gap-2 items-center">
-          {navItems.map((item, index) =>
-            item.dropdown ? (
-              <li
-                key={index}
-                className="relative"
-                onMouseEnter={() => setIsProfileOpen(true)}
-                onMouseLeave={() => setIsProfileOpen(false)}
+  return (
+    <header className="sticky top-0 z-50 w-full border-b border-gray-200/80 bg-white/95 shadow-sm backdrop-blur-xl transition-colors duration-300 dark:border-gray-800 dark:bg-gray-950/95">
+      <nav className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
+        <div className="flex min-h-[76px] items-center justify-between gap-4">
+
+          {/* Brand Logo */}
+          <Link
+            to="/"
+            onClick={() => {
+              setIsOpen(false);
+              setIsProfileOpen(false);
+            }}
+            className="group flex shrink-0 items-center gap-2.5"
+          >
+            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-md shadow-emerald-600/20 transition-transform duration-200 group-hover:scale-105">
+              <FaHandsHelping className="text-xl" />
+            </span>
+
+            <span className="text-xl font-extrabold tracking-tight text-gray-900 sm:text-2xl dark:text-white">
+              Volunteer
+              <span className="text-emerald-600 dark:text-emerald-400">
+                Hub
+              </span>
+            </span>
+          </Link>
+
+          {/* Desktop Navigation */}
+          <div className="hidden items-center gap-1 xl:flex">
+            {navItems.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.end}
+                className={navLinkClass}
               >
-                {user ? (
-                  <button className="flex items-center gap-2 px-3.5 py-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800/80 transition-colors cursor-pointer">
-                    <img
-                      src={user.photoURL || "https://via.placeholder.com/150"}
-                      alt="Profile"
-                      className="w-8 h-8 rounded-full object-cover border-2 border-emerald-500 shadow-sm"
-                      referrerPolicy="no-referrer"
-                    />
-                    <span className="text-sm font-semibold text-gray-700 dark:text-gray-200 max-w-[100px] truncate">
+                {item.label}
+              </NavLink>
+            ))}
+
+            {/* Profile Dropdown */}
+            <div
+              className="relative ml-1"
+              onMouseEnter={() => setIsProfileOpen(true)}
+              onMouseLeave={() => setIsProfileOpen(false)}
+            >
+              {user ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setIsProfileOpen((prev) => !prev)}
+                    aria-expanded={isProfileOpen}
+                    className="flex items-center gap-2 rounded-xl px-3 py-2 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 dark:hover:bg-gray-800"
+                  >
+                    {user.photoURL ? (
+                      <img
+                        src={user.photoURL}
+                        alt="Profile"
+                        referrerPolicy="no-referrer"
+                        className="h-8 w-8 rounded-full border-2 border-emerald-500 object-cover"
+                      />
+                    ) : (
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400">
+                        <FaUser />
+                      </span>
+                    )}
+
+                    <span className="max-w-[100px] truncate text-sm font-semibold text-gray-700 dark:text-gray-200">
                       {user.displayName?.split(" ")[0] || "Profile"}
                     </span>
-                    <FaChevronDown className={`w-3 h-3 text-gray-500 transition-transform duration-200 ${isProfileOpen ? "rotate-180" : ""}`} />
+
+                    <FaChevronDown
+                      className={`text-xs text-gray-500 transition-transform duration-200 ${
+                        isProfileOpen ? "rotate-180" : ""
+                      }`}
+                    />
                   </button>
+
+                  {isProfileOpen && (
+                    <div className="absolute right-0 top-full z-50 w-60 pt-2">
+                      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white p-2 shadow-xl shadow-gray-900/10 dark:border-gray-800 dark:bg-gray-900">
+                        <div className="border-b border-gray-100 px-3 py-3 dark:border-gray-800">
+                          <p className="text-xs font-medium text-gray-400">
+                            SIGNED IN AS
+                          </p>
+                          <p className="mt-1 truncate text-sm font-semibold text-gray-800 dark:text-white">
+                            {user.email}
+                          </p>
+                        </div>
+
+                        <NavLink
+                          to="/profile"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="mt-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-emerald-50 hover:text-emerald-700 dark:text-gray-300 dark:hover:bg-emerald-500/10 dark:hover:text-emerald-400"
+                        >
+                          <FaUser />
+                          My Profile
+                        </NavLink>
+
+                        <NavLink
+                          to="/settings"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-emerald-50 hover:text-emerald-700 dark:text-gray-300 dark:hover:bg-emerald-500/10 dark:hover:text-emerald-400"
+                        >
+                          <FaCog />
+                          Settings
+                        </NavLink>
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <NavLink to="/login" className={navLinkClass}>
+                  Profile
+                </NavLink>
+              )}
+            </div>
+          </div>
+
+          {/* Desktop Actions */}
+          <div className="hidden shrink-0 items-center gap-3 xl:flex">
+            <DarkModeToggle />
+
+            {user ? (
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="inline-flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-2.5 text-sm font-bold text-rose-600 transition hover:border-rose-300 hover:bg-rose-100 dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-400 dark:hover:bg-rose-950"
+              >
+                <FaSignOutAlt />
+                Logout
+              </button>
+            ) : (
+              <NavLink
+                to="/login"
+                className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-emerald-600/20 transition hover:-translate-y-0.5 hover:bg-emerald-700 hover:shadow-lg"
+              >
+                <FaSignInAlt />
+                Login
+              </NavLink>
+            )}
+          </div>
+
+          {/* Mobile Actions */}
+          <div className="flex shrink-0 items-center gap-2 xl:hidden">
+            <DarkModeToggle />
+
+            <button
+              type="button"
+              onClick={() => setIsOpen((prev) => !prev)}
+              aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-expanded={isOpen}
+              className="flex h-11 w-11 items-center justify-center rounded-xl border border-gray-200 bg-gray-50 text-gray-700 transition hover:border-emerald-300 hover:text-emerald-600 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200"
+            >
+              {isOpen ? (
+                <FaTimes className="text-lg" />
+              ) : (
+                <FaBars className="text-lg" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Navigation Drawer */}
+        {isOpen && (
+          <div className="border-t border-gray-100 py-4 xl:hidden dark:border-gray-800">
+            {/* Mobile User Info */}
+            {user && (
+              <div className="mb-4 flex items-center gap-3 rounded-2xl bg-emerald-50 p-3 dark:bg-emerald-500/10">
+                {user.photoURL ? (
+                  <img
+                    src={user.photoURL}
+                    alt="Profile"
+                    referrerPolicy="no-referrer"
+                    className="h-11 w-11 rounded-full border-2 border-emerald-500 object-cover"
+                  />
                 ) : (
-                  <span className="px-3.5 py-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
-                    {item.label}
+                  <span className="flex h-11 w-11 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400">
+                    <FaUser />
                   </span>
                 )}
 
-                {/* Dropdown Menu */}
-                {isProfileOpen && user && (
-                  <div className="absolute right-0 mt-1 w-52 bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 py-2 animate-in fade-in zoom-in-95 duration-200">
-                    <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-800 mb-1">
-                      <p className="text-xs text-gray-400 font-medium">Signed in as</p>
-                      <p className="text-sm font-bold text-gray-900 dark:text-white truncate">{user.email}</p>
-                    </div>
-                    {item.dropdown.map((subItem) => (
-                      <NavLink
-                        key={subItem.to}
-                        to={subItem.to}
-                        onClick={() => setIsProfileOpen(false)}
-                        className="block px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
-                      >
-                        {subItem.label}
-                      </NavLink>
-                    ))}
-                  </div>
-                )}
-              </li>
-            ) : (
-              <li key={item.to}>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-bold text-gray-900 dark:text-white">
+                    {user.displayName || "Volunteer"}
+                  </p>
+                  <p className="truncate text-xs text-gray-500 dark:text-gray-400">
+                    {user.email}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Mobile Links */}
+            <div className="flex flex-col gap-1.5">
+              {navItems.map((item) => (
                 <NavLink
+                  key={item.to}
                   to={item.to}
+                  end={item.end}
+                  onClick={() => setIsOpen(false)}
                   className={({ isActive }) =>
-                    `px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
+                    `block rounded-xl px-4 py-3 text-sm font-semibold transition ${
                       isActive
-                        ? "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 font-semibold"
-                        : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800/80 hover:text-gray-900 dark:hover:text-white"
+                        ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400"
+                        : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
                     }`
                   }
                 >
                   {item.label}
                 </NavLink>
-              </li>
-            )
-          )}
+              ))}
 
-          {/* Dark Mode Toggle */}
-          <li className="ml-1">
-            <DarkModeToggle />
-          </li>
-
-          {/* Login/Logout Button */}
-          <li className="ml-2">
-            {user ? (
-              <button
-                onClick={handleLogout}
-                className="inline-flex items-center gap-2 px-4 py-2.5 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 text-rose-600 dark:text-rose-400 text-sm font-semibold rounded-xl transition-all duration-200 cursor-pointer shadow-sm"
-              >
-                <FaSignOutAlt className="w-3.5 h-3.5" />
-                <span>Logout</span>
-              </button>
-            ) : (
-              <NavLink
-                to="/login"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl shadow-md shadow-emerald-600/20 transition-all duration-200"
-              >
-                <FaSignInAlt className="w-3.5 h-3.5" />
-                <span>Login</span>
-              </NavLink>
-            )}
-          </li>
-        </ul>
-
-        {/* Mobile Menu Button & DarkMode toggle for mobile */}
-        <div className="flex items-center gap-3 md:hidden">
-          <DarkModeToggle />
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="p-2.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 focus:outline-none"
-          >
-            {isOpen ? <FaTimes className="text-xl" /> : <FaBars className="text-xl" />}
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile Menu Drawer */}
-      {isOpen && (
-        <div className="md:hidden bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-6 py-6 space-y-4 shadow-2xl animate-in slide-in-from-top duration-300">
-          
-          {/* User Profile Info on Mobile if logged in */}
-          {user && (
-            <div className="flex items-center gap-3 pb-4 border-b border-gray-100 dark:border-gray-800">
-              <img
-                src={user.photoURL || "https://via.placeholder.com/150"}
-                alt="Profile"
-                className="w-10 h-10 rounded-full object-cover border-2 border-emerald-500"
-                referrerPolicy="no-referrer"
-              />
-              <div className="overflow-hidden">
-                <p className="text-sm font-bold text-gray-900 dark:text-white truncate">
-                  {user.displayName || "User"}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                  {user.email}
-                </p>
-              </div>
-            </div>
-          )}
-
-          <ul className="space-y-1.5">
-            {navItems.map((item, index) =>
-              item.dropdown ? (
-                <li key={index} className="space-y-1">
-                  <div className="px-4 py-2 text-xs font-bold uppercase tracking-wider text-gray-400">
-                    {item.label}
-                  </div>
-                  <ul className="pl-3 space-y-1">
-                    {item.dropdown.map((subItem) => (
-                      <li key={subItem.to}>
-                        <NavLink
-                          to={subItem.to}
-                          onClick={() => {
-                            setIsOpen(false);
-                            setIsProfileOpen(false);
-                          }}
-                          className={({ isActive }) =>
-                            `block px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                              isActive
-                                ? "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 font-semibold"
-                                : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
-                            }`
-                          }
-                        >
-                          {subItem.label}
-                        </NavLink>
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-              ) : (
-                <li key={item.to}>
+              {/* Mobile Profile Links */}
+              {user && (
+                <>
                   <NavLink
-                    to={item.to}
+                    to="/profile"
                     onClick={() => setIsOpen(false)}
                     className={({ isActive }) =>
-                      `block px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                      `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition ${
                         isActive
-                          ? "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 font-semibold"
-                          : "text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
+                          ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400"
+                          : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
                       }`
                     }
                   >
-                    {item.label}
+                    <FaUser />
+                    My Profile
                   </NavLink>
-                </li>
-              )
-            )}
-          </ul>
 
-          {/* Mobile Auth Button */}
-          <div className="pt-4 border-t border-gray-100 dark:border-gray-800">
-            {user ? (
-              <button
-                onClick={() => {
-                  handleLogout();
-                  setIsOpen(false);
-                }}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 font-semibold rounded-xl text-sm transition-all"
-              >
-                <FaSignOutAlt />
-                <span>Logout</span>
-              </button>
-            ) : (
-              <NavLink
-                to="/login"
-                onClick={() => setIsOpen(false)}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-sm shadow-md transition-all"
-              >
-                <FaSignInAlt />
-                <span>Login</span>
-              </NavLink>
-            )}
+                  <NavLink
+                    to="/settings"
+                    onClick={() => setIsOpen(false)}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition ${
+                        isActive
+                          ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400"
+                          : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                      }`
+                    }
+                  >
+                    <FaCog />
+                    Settings
+                  </NavLink>
+                </>
+              )}
+            </div>
+
+            {/* Mobile Authentication */}
+            <div className="mt-4 border-t border-gray-100 pt-4 dark:border-gray-800">
+              {user ? (
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-rose-50 px-4 py-3 text-sm font-bold text-rose-600 transition hover:bg-rose-100 dark:bg-rose-950/40 dark:text-rose-400 dark:hover:bg-rose-950"
+                >
+                  <FaSignOutAlt />
+                  Logout
+                </button>
+              ) : (
+                <NavLink
+                  to="/login"
+                  onClick={() => setIsOpen(false)}
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white shadow-md shadow-emerald-600/20 transition hover:bg-emerald-700"
+                >
+                  <FaSignInAlt />
+                  Login to Continue
+                </NavLink>
+              )}
+            </div>
           </div>
-
-        </div>
-      )}
-    </nav>
+        )}
+      </nav>
+    </header>
   );
 };
 
