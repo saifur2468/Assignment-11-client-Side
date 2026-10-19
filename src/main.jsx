@@ -44,10 +44,8 @@ const router = createBrowserRouter([
       {
         path: "posts",
         element: (
-          <PrivateRoute>
-            <PageTitle title="All Posts Section" />
-            <NeddPost />
-          </PrivateRoute>
+          <NeddPost />
+         
         ),
       },
       {
